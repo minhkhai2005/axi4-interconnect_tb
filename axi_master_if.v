@@ -270,7 +270,6 @@ module axi_master_if #(
     // 5. Khối Block RAM (128 words) [cite: 147]
     axi_ram #(
         .ID_WIDTH(ID_WIDTH),
-        .ADDR_WIDTH(ADDR_WIDTH),
         .DATA_WIDTH(DATA_WIDTH),
         .RAM_SIZE(RAM_SIZE)
     ) u_axi_ram (

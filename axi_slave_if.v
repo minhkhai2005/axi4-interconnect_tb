@@ -126,7 +126,7 @@ module axi_slave_if #(
 
     // 5. AXI RAM
     axi_ram #(
-        .ID_WIDTH(ID_WIDTH), .ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH), .RAM_SIZE(128)
+        .ID_WIDTH(ID_WIDTH), .DATA_WIDTH(DATA_WIDTH), .RAM_SIZE(128)
     ) u_axi_ram (
         .ACLK_i(ACLK_i),
         .ram_wren(mux_ram_we),

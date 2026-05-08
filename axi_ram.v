@@ -1,11 +1,11 @@
 module axi_ram #(
     parameter ID_WIDTH   = 4,
-    parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
     parameter RAM_SIZE   = 128, // Tổng số byte trong RAM
 
     // Số lượng byte lane (ví dụ: 32-bit data bus = 4 lanes)
-    localparam STRB_WIDTH = DATA_WIDTH / 8
+    localparam STRB_WIDTH = DATA_WIDTH / 8,
+    parameter ADDR_WIDTH = $clog2(RAM_SIZE)
 )(
     input                           ACLK_i,
 

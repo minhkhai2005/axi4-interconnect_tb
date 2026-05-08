@@ -16,9 +16,13 @@ module tb_axi_interconnect();
     parameter MST_ID_W          = $clog2(MST_AMT);
     parameter TRANS_SLV_ID_W    = TRANS_MST_ID_W + MST_ID_W;
     parameter TRANS_BURST_W     = 2;
-    parameter TRANS_DATA_LEN_W  = 3;
+    parameter TRANS_DATA_LEN_W  = 8;
     parameter TRANS_DATA_SIZE_W = 3;
     parameter TRANS_WR_RESP_W   = 2;
+
+    // RAM
+    parameter RAM_SIZE          = 128;
+    parameter RAM_ADDR_WIDTH    = $clog2(RAM_SIZE);
 
     // =========================================================================
     // 2. CLOCK & RESET
@@ -40,21 +44,21 @@ module tb_axi_interconnect();
     // =========================================================================
     // 3. MASTER CONTROL SIGNALS (Arrays of reg)
     // =========================================================================
-    reg [4:0]            mst_address_memory   [0:MST_AMT-1];
+    reg [RAM_ADDR_WIDTH-1:0]            mst_address_memory   [0:MST_AMT-1];
     reg                  mst_READ_EN          [0:MST_AMT-1];
     reg [DATA_WIDTH-1:0] mst_DATA_MEMORY_i    [0:MST_AMT-1];
     reg                  mst_WRITE_EN         [0:MST_AMT-1];
     wire [DATA_WIDTH-1:0]mst_DATA_MEMORY_o    [0:MST_AMT-1]; // Output từ master là wire
     
     reg                  mst_ReadTrans_EN_i   [0:MST_AMT-1];
-    reg [4:0]            mst_r_set_addr_memory[0:MST_AMT-1];
+    reg [RAM_ADDR_WIDTH-1:0]            mst_r_set_addr_memory[0:MST_AMT-1];
     reg [ADDR_WIDTH-1:0] mst_set_ARADDR_i     [0:MST_AMT-1];
     reg [1:0]            mst_set_ARBURST_i    [0:MST_AMT-1];
     reg [7:0]            mst_set_ARLEN_i      [0:MST_AMT-1];
     reg [2:0]            mst_set_ARSIZE_i     [0:MST_AMT-1];
     
     reg                  mst_WriteTrans_EN_i  [0:MST_AMT-1];
-    reg [4:0]            mst_w_set_addr_memory[0:MST_AMT-1];
+    reg [RAM_ADDR_WIDTH-1:0]            mst_w_set_addr_memory[0:MST_AMT-1];
     reg [ADDR_WIDTH-1:0] mst_set_AWADDR_i     [0:MST_AMT-1];
     reg [1:0]            mst_set_AWBURST_i    [0:MST_AMT-1];
     reg [7:0]            mst_set_AWLEN_i      [0:MST_AMT-1];
@@ -75,7 +79,7 @@ module tb_axi_interconnect();
     // =========================================================================
     // 4. SLAVE CONTROL SIGNALS
     // =========================================================================
-    reg [5:0]            slv_address_memory   [0:SLV_AMT-1];
+    reg [RAM_ADDR_WIDTH-1:0]                  slv_address_memory   [0:SLV_AMT-1];
     reg [DATA_WIDTH-1:0] slv_DATA_MEMORY_i    [0:SLV_AMT-1];
     reg                  slv_WRITE_EN         [0:SLV_AMT-1];
 
@@ -277,7 +281,9 @@ module tb_axi_interconnect();
         .MST_AMT(MST_AMT),
         .SLV_AMT(SLV_AMT),
         .OUTSTANDING_AMT(OUTSTANDING_AMT),
-        .MST_WEIGHT(MST_WEIGHT)
+        .MST_WEIGHT(MST_WEIGHT),
+        .TRANS_DATA_LEN_W(TRANS_DATA_LEN_W),
+        .TRANS_DATA_SIZE_W(TRANS_DATA_SIZE_W)
     ) u_interconnect (
         .ACLK_i     (ACLK),
         .ARESETn_i  (ARESETn),
