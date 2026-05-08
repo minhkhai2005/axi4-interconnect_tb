@@ -390,6 +390,22 @@ module tb_axi_interconnect();
         end
     endtask
 
+    task read_master_ram ( 
+        input integer m_idx, 
+        input [4:0]   addr
+    );
+        reg [31:0] data;
+        begin
+            @(negedge ACLK);
+            mst_address_memory[m_idx] <= addr;
+            mst_READ_EN[m_idx]       <= 1;
+            @(posedge ACLK);
+            mst_READ_EN[m_idx]       <= 0;
+            data = mst_DATA_MEMORY_o[m_idx];
+            $display("[TB] Setup Master RAM: Read 0x%0h, Master[%0d], Address: 0x%0h, Time: %0d", data, m_idx, addr, $time);
+        end
+    endtask
+
     task fill_slave_ram(
         input integer s_idx,      // Chỉ số của Slave (0, 1, 2...)
         input [5:0]   addr,       // Địa chỉ trong RAM nội (tối đa 64 ô nhớ theo khai báo [5:0])
@@ -613,7 +629,11 @@ module tb_axi_interconnect();
         
         // 1. Nạp dữ liệu vào RAM nội của Master 0
         fill_master_ram(0, 5'd0, 32'hDEADBEEF);
-        fill_master_ram(0, 5'd1, 32'h12345678);
+        fill_master_ram(0, 5'd4, 32'h12345678);
+
+        #50;
+        read_master_ram(0, 0);
+        read_master_ram(0, 4);
 
         // 2. Master 0 thực hiện ghi sang Slave (VD: Map vùng nhớ 0x8000_0000 thuộc Slave 2)
         #50;
